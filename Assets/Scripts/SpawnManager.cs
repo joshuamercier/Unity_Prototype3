@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     // Class variables
-    private Vector3 spawnPos = new Vector3(55, 0, 0);
+    public Vector3 spawnPos = new Vector3(55, 0, 0);
     private float startDelay = 2.0f;
     private float repeatRate = 2.0f;
     private PlayerController playerControllerScript;
