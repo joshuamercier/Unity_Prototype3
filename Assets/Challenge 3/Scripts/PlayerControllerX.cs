@@ -6,6 +6,7 @@ public class PlayerControllerX : MonoBehaviour
 {
     public bool gameOver;
     public float floatForce;
+    public float bounceForce;
 
     private float maxHeight = 16.0f;
     private bool isLowEnough = true;
@@ -18,6 +19,7 @@ public class PlayerControllerX : MonoBehaviour
     private AudioSource playerAudio;
     public AudioClip moneySound;
     public AudioClip explodeSound;
+    public AudioClip bounceSound;
 
 
     // Start is called before the first frame update
@@ -38,7 +40,11 @@ public class PlayerControllerX : MonoBehaviour
         if(transform.position.y > maxHeight)
         {
             isLowEnough = false;
+            // Reset position to the boundary
             transform.position = new Vector3(transform.position.x, maxHeight, transform.position.z);
+            // Remove the force so balloon isn't stuck at boundary
+            playerRb.velocity = Vector3.zero;
+            playerRb.angularVelocity = Vector3.zero;
         }
         else
         {
@@ -70,6 +76,13 @@ public class PlayerControllerX : MonoBehaviour
             playerAudio.PlayOneShot(moneySound, 1.0f);
             Destroy(other.gameObject);
 
+        }
+        else if (other.gameObject.CompareTag("Ground") && !gameOver)
+        {
+            // Bounce balloon up
+            playerRb.AddForce(Vector3.up * bounceForce, ForceMode.Impulse);
+            // Play bounce sound
+            playerAudio.PlayOneShot(bounceSound, 1.0f);
         }
 
     }
