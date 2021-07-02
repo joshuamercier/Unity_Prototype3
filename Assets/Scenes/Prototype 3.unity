@@ -835,7 +835,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPos: {x: 55, y: 0, z: 0}
-  obstaclePrefab: {fileID: 9128940650476517113, guid: e2954721d92c2f84090aae112ebcf057, type: 3}
+  obstaclePrefabs:
+  - {fileID: 9128940650476517113, guid: e2954721d92c2f84090aae112ebcf057, type: 3}
+  - {fileID: 6064141045956103377, guid: 1fb756d4106c2ee4fa2d944e2e597c43, type: 3}
+  - {fileID: 5974313606613563712, guid: 104d5101c1aedc84aad6e655adaf46d7, type: 3}
+  - {fileID: 6210212129492956851, guid: b189dbe4f2c61ce48ac1a6b1be90b680, type: 3}
+  - {fileID: 2844587240369663624, guid: e65ae5a5b90c8fc4181c773a431a215f, type: 3}
 --- !u!4 &1260257656
 Transform:
   m_ObjectHideFlags: 0
