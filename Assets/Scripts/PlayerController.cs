@@ -8,9 +8,10 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
     public float gravityModifier;
     public bool gameOver = false;
+    public int maxJumpsAllowed = 2;
 
+    private int currentJumps = 0;
     private Rigidbody playerRb;
-    private bool isOnGround = true;
     // Animator reference
     private Animator playerAnim;
     // Particle effects references
@@ -35,16 +36,17 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
+        if (Input.GetKeyDown(KeyCode.Space) && !gameOver && currentJumps != maxJumpsAllowed)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOnGround = false;
             // Change animation for jumping
             playerAnim.SetTrigger("Jump_trig");
             // Stop dirt particle from playing
             dirtParticle.Stop();
             // Play jump sound
             playerAudio.PlayOneShot(jumpSound, 1.0f);
+            // Increment jump count
+            currentJumps++;
         }
     }
 
@@ -52,9 +54,10 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            isOnGround = true;
             // Start dirt particle again when player lands on ground
             dirtParticle.Play();
+            // Reset current jumps
+            currentJumps = 0;
         } 
         else if (collision.gameObject.CompareTag("Obstacle"))
         {

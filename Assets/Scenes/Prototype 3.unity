@@ -236,6 +236,7 @@ MonoBehaviour:
   jumpForce: 600
   gravityModifier: 1.5
   gameOver: 0
+  maxJumpsAllowed: 2
   dirtParticle: {fileID: 197884297}
   explosionParticle: {fileID: 255691942}
   jumpSound: {fileID: 8300000, guid: 08ab7053d586c458db3774d33c141a4b, type: 3}
@@ -841,6 +842,7 @@ MonoBehaviour:
   - {fileID: 5974313606613563712, guid: 104d5101c1aedc84aad6e655adaf46d7, type: 3}
   - {fileID: 6210212129492956851, guid: b189dbe4f2c61ce48ac1a6b1be90b680, type: 3}
   - {fileID: 2844587240369663624, guid: e65ae5a5b90c8fc4181c773a431a215f, type: 3}
+  - {fileID: 1723527796089984778, guid: f264166bd536cc44bbd06862be37147d, type: 3}
 --- !u!4 &1260257656
 Transform:
   m_ObjectHideFlags: 0
