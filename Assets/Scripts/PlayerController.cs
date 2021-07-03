@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip crashSound;
     // Player adui source
     private AudioSource playerAudio;
+    // Time
+    private float fixedDeltaTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,12 +33,36 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
         // Get the audio source
         playerAudio = GetComponent<AudioSource>();
+        // Get the default Delta time
+        fixedDeltaTime = Time.fixedDeltaTime;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !gameOver && currentJumps != maxJumpsAllowed)
+        // Check if dashing
+        if (Input.GetKey(KeyCode.LeftShift) && !gameOver)
+        {
+                CheckJump();
+                Time.timeScale = 2.0f;
+                ScoreScript.gameScore += 10;
+        }
+        else if(!gameOver)
+        {
+            CheckJump();
+            // Reset time scale
+            Time.timeScale = 1.0f;
+            ScoreScript.gameScore += 1;
+        }
+
+
+
+    }
+
+    private void CheckJump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && currentJumps != maxJumpsAllowed)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             // Change animation for jumping
