@@ -7,10 +7,12 @@ public class PlayerController : MonoBehaviour
     // Class variables
     public float jumpForce;
     public float gravityModifier;
-    public bool gameOver = false;
     public int maxJumpsAllowed = 2;
 
+    private bool introFinished = false;
     private int currentJumps = 0;
+    private bool gameOver = false;
+    // Rigibody
     private Rigidbody playerRb;
     // Animator reference
     private Animator playerAnim;
@@ -22,8 +24,9 @@ public class PlayerController : MonoBehaviour
     public AudioClip crashSound;
     // Player adui source
     private AudioSource playerAudio;
-    // Time
-    private float fixedDeltaTime;
+    // Score script
+    ScoreScript scoreCounter;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,27 +36,38 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
         // Get the audio source
         playerAudio = GetComponent<AudioSource>();
-        // Get the default Delta time
-        fixedDeltaTime = Time.fixedDeltaTime;
-
+        // Sert start spped_f value
+        playerAnim.SetFloat("Speed_f", 0.5f);
+        // Get scorescript
+        scoreCounter = GameObject.Find("Score").GetComponent<ScoreScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.x < -4)
+        {
+            transform.Translate(Vector3.forward * Time.deltaTime * 2f);
+        }
+        else
+        {
+            introFinished = true;
+            playerAnim.SetFloat("Speed_f", 0.6f);
+        }
+
         // Check if dashing
         if (Input.GetKey(KeyCode.LeftShift) && !gameOver)
         {
                 CheckJump();
                 Time.timeScale = 2.0f;
-                ScoreScript.gameScore += 10;
+                scoreCounter.AddScore(10);
         }
         else if(!gameOver)
         {
             CheckJump();
             // Reset time scale
             Time.timeScale = 1.0f;
-            ScoreScript.gameScore += 1;
+            scoreCounter.AddScore(1);
         }
 
 
@@ -99,5 +113,18 @@ public class PlayerController : MonoBehaviour
             // Play crash sound
             playerAudio.PlayOneShot(crashSound, 1.0f);
         }
+    }
+
+    // Properties for variables
+    public bool GameOver
+    {
+        get => gameOver;
+        set => gameOver = value;
+    }
+
+    public bool IntroDone
+    {
+        get => introFinished;
+        set => introFinished = value;
     }
 }
