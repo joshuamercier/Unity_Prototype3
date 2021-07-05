@@ -45,15 +45,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.x < -4)
+        // Only perform if intro is not finished
+        if(introFinished == false)
         {
-            transform.Translate(Vector3.forward * Time.deltaTime * 2f);
+            if (transform.position.x < -4)
+            {
+                // Keep dirt off for intro
+                dirtParticle.Stop();
+                transform.Translate(Vector3.forward * Time.deltaTime * 2f);
+            }
+            else
+            {
+                introFinished = true;
+                playerAnim.SetFloat("Speed_f", 0.6f);
+                // Enable dirt particles
+                dirtParticle.Play();
+            }
         }
-        else
-        {
-            introFinished = true;
-            playerAnim.SetFloat("Speed_f", 0.6f);
-        }
+        
 
         // Check if dashing
         if (Input.GetKey(KeyCode.LeftShift) && !gameOver)
@@ -92,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && introFinished)
         {
             // Start dirt particle again when player lands on ground
             dirtParticle.Play();

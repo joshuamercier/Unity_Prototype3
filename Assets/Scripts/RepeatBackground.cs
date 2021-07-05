@@ -12,6 +12,7 @@ public class RepeatBackground : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         startPos = transform.position;
         if (gameObject.tag.Equals("Background"))
         {
@@ -28,9 +29,11 @@ public class RepeatBackground : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.x < startPos.x - repeatWidth)
+        if (transform.position.x < startPos.x - repeatWidth)
         {
             transform.position = startPos;
         }
+
+
     }
 }
