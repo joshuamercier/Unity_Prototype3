@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private bool introFinished = false;
     private int currentJumps = 0;
     private bool gameOver = false;
+    private bool playButtonPressed = false;
     // Rigibody
     private Rigidbody playerRb;
     // Animator reference
@@ -26,10 +29,18 @@ public class PlayerController : MonoBehaviour
     private AudioSource playerAudio;
     // Score script
     ScoreScript scoreCounter;
+    [SerializeField] private GameObject gameOverScreen; 
+    [SerializeField] private TextMeshProUGUI endScoreText;
+    [SerializeField] private GameObject titleScreen;
+    [SerializeField] private GameObject mainCamera;
 
-    // Start is called before the first frame update
-    void Start()
+    public void StartGame()
     {
+        // Disable title screen
+        titleScreen.SetActive(false);
+        // Start the music
+        AudioSource music = mainCamera.GetComponent<AudioSource>();
+        music.Play();
         playerRb = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
         // Get the animator
@@ -40,47 +51,68 @@ public class PlayerController : MonoBehaviour
         playerAnim.SetFloat("Speed_f", 0.5f);
         // Get scorescript
         scoreCounter = GameObject.Find("Score").GetComponent<ScoreScript>();
+        // Switch flag
+        playButtonPressed = true;
+    }
+
+    public void GameOverScreen()
+    {
+        // Enable the Game Over screen
+        gameOverScreen.SetActive(true);
+        // Set score text
+        SetGameOverScoreText();
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void SetGameOverScoreText()
+    {
+        string text = "You acheived a total score of " + scoreCounter.Score;
+        endScoreText.text = text;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Only perform if intro is not finished
-        if(introFinished == false)
+        if(playButtonPressed == true)
         {
-            if (transform.position.x < -4)
+            // Only perform if intro is not finished
+            if (introFinished == false)
             {
-                // Keep dirt off for intro
-                dirtParticle.Stop();
-                transform.Translate(Vector3.forward * Time.deltaTime * 2f);
+                if (transform.position.x < -4)
+                {
+                    // Keep dirt off for intro
+                    dirtParticle.Stop();
+                    transform.Translate(Vector3.forward * Time.deltaTime * 2f);
+                }
+                else
+                {
+                    introFinished = true;
+                    playerAnim.SetFloat("Speed_f", 0.6f);
+                    // Enable dirt particles
+                    dirtParticle.Play();
+                }
             }
-            else
-            {
-                introFinished = true;
-                playerAnim.SetFloat("Speed_f", 0.6f);
-                // Enable dirt particles
-                dirtParticle.Play();
-            }
-        }
-        
 
-        // Check if dashing
-        if (Input.GetKey(KeyCode.LeftShift) && !gameOver)
-        {
+
+            // Check if dashing
+            if (Input.GetKey(KeyCode.LeftShift) && !gameOver)
+            {
                 CheckJump();
                 Time.timeScale = 2.0f;
                 scoreCounter.AddScore(10);
+            }
+            else if (!gameOver)
+            {
+                CheckJump();
+                // Reset time scale
+                Time.timeScale = 1.0f;
+                scoreCounter.AddScore(1);
+            }
         }
-        else if(!gameOver)
-        {
-            CheckJump();
-            // Reset time scale
-            Time.timeScale = 1.0f;
-            scoreCounter.AddScore(1);
-        }
-
-
-
     }
 
     private void CheckJump()
@@ -111,7 +143,6 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
             gameOver = true;
-            Debug.Log("Game Over!");
             // Death animation
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
@@ -121,6 +152,7 @@ public class PlayerController : MonoBehaviour
             dirtParticle.Stop();
             // Play crash sound
             playerAudio.PlayOneShot(crashSound, 1.0f);
+            GameOverScreen();
         }
     }
 
